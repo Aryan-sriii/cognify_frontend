@@ -47,7 +47,7 @@ export default function Dashboard() {
         const token = localStorage.getItem('cognify_token');
         if (!token) {
             router.push('/login');
-            return; 
+            return; // ✅ FIX: stop execution so loadInitialData doesn't fire without a token
         }
 
         const loadInitialData = async () => {
