@@ -9,8 +9,8 @@ import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 
 export default function LoginPage() {
-    const [email, setEmail] = useState('user@cognify.com');
-    const [password, setPassword] = useState('password123');
+    const [email, setEmail] = useState('');       // ✅ FIX: empty default
+    const [password, setPassword] = useState(''); // ✅ FIX: empty default
     const [loading, setLoading] = useState(false);
     const [errorMsg, setErrorMsg] = useState('');
     const router = useRouter();
@@ -23,7 +23,6 @@ export default function LoginPage() {
         try {
             const res = await api.login(email, password);
             if (res.token) {
-                // API returns { token, userProfile: { userId, name, email, age } }
                 const userData = res.userProfile || res.user || { email };
                 contextLogin(res.token, userData);
                 toast.success("Welcome back!");
@@ -63,6 +62,7 @@ export default function LoginPage() {
                             required
                             value={email}
                             onChange={e => setEmail(e.target.value)}
+                            autoComplete="email"
                             className="w-full px-5 py-3.5 rounded-2xl border border-gray-100 bg-gray-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-blue)] focus:border-transparent transition-all shadow-inner"
                             placeholder="Enter your email"
                         />
@@ -74,6 +74,7 @@ export default function LoginPage() {
                             required
                             value={password}
                             onChange={e => setPassword(e.target.value)}
+                            autoComplete="current-password"
                             className="w-full px-5 py-3.5 rounded-2xl border border-gray-100 bg-gray-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-blue)] focus:border-transparent transition-all shadow-inner"
                             placeholder="Enter your password"
                         />
