@@ -47,6 +47,7 @@ export default function Dashboard() {
         const token = localStorage.getItem('cognify_token');
         if (!token) {
             router.push('/login');
+            return; 
         }
 
         const loadInitialData = async () => {
