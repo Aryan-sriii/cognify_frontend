@@ -24,9 +24,16 @@ apiClient.interceptors.request.use((config) => {
 apiClient.interceptors.response.use((response) => response, (error) => {
     if (error.response && error.response.status === 401) {
         if (typeof window !== 'undefined') {
-            localStorage.removeItem('cognify_token');
-            localStorage.removeItem('cognify_user');
-            window.location.href = '/login';
+            // ✅ FIX: Don't redirect if already on an auth page —
+            // prevents reload loop that causes "Unexpected token '<'" HTML parse crash
+            const isAuthPage = ['/login', '/register', '/forgot-password', '/reset-password']
+                .some(path => window.location.pathname.startsWith(path));
+
+            if (!isAuthPage) {
+                localStorage.removeItem('cognify_token');
+                localStorage.removeItem('cognify_user');
+                window.location.href = '/login';
+            }
         }
     }
     return Promise.reject(error);
@@ -68,12 +75,10 @@ export const api = {
         return res.data;
     },
     async syncHealthData(data?: any) {
-        // Keeping it optional parameter in case we just trigger a backend sync, or pass payload
         const res = await apiClient.post('/api/health/sync', data || {});
         return res.data;
     },
     async getHealthHistory() {
-        // Retaining this for History page if applicable
         const res = await apiClient.get('/api/health/history');
         return res.data;
     },
