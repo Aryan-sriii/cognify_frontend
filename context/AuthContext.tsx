@@ -1,5 +1,4 @@
 "use client";
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { api } from '@/lib/api';
 import { useRouter } from 'next/navigation';
@@ -53,7 +52,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                     }
                 } catch (e) {
                     console.error('Failed to refresh user data', e);
-                    // If auth fails completely (401), the api handles token removal
+                    // ✅ FIX: Clear bad/expired token so the 401 interceptor
+                    // doesn't trigger window.location redirect and cause HTML parse crash
+                    localStorage.removeItem('cognify_token');
+                    localStorage.removeItem('cognify_user');
+                    setUser(null);
                 }
             }
 
